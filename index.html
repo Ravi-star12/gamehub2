@@ -2,237 +2,209 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>GameHub Ultra</title>
+<title>GameHub Pro Ultra</title>
 
 <style>
 body{
-margin:0;
-font-family:Arial;
-background:#1b2838;
-color:white;
-display:flex;
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#141e30;
+  color:white;
 }
 
-.sidebar{
-width:220px;
-background:#171a21;
-height:100vh;
-padding:10px;
-}
-
-.sidebar h2{
-text-align:center;
-}
-
-.sidebar button{
-width:100%;
-padding:10px;
-margin:5px 0;
-border:none;
-background:#2a475e;
-color:white;
-border-radius:6px;
-}
-
-.main{
-flex:1;
-padding:20px;
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
+header{
+  background:#0b1622;
+  padding:15px;
+  font-size:22px;
+  text-align:center;
+  box-shadow:0 2px 10px rgba(0,0,0,0.4);
 }
 
 .games{
-display:flex;
-flex-wrap:wrap;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  padding:20px;
+  gap:10px;
 }
 
 .card{
-background:#2a475e;
-margin:10px;
-padding:10px;
-border-radius:10px;
-width:180px;
-text-align:center;
+  background:#1f2a38;
+  margin:15px;
+  padding:10px;
+  border-radius:12px;
+  width:220px;
+  text-align:center;
+  transition:0.3s;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
 
-button.play{
-background:#66c0f4;
-color:black;
+.card:hover{
+  transform:scale(1.05);
 }
 
-canvas{
-background:#111;
-margin-top:20px;
+.card img{
+  width:100%;
+  border-radius:10px;
 }
 
-input{
-padding:8px;
-border-radius:6px;
-border:none;
+button{
+  padding:10px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  background:#00bfff;
+  color:black;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+/* CONTAINER DO JOGO */
+#gameContainer{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  display:none;
+  cursor:none;
+  z-index:9999;
+}
+
+#gameFrame{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+/* MIRA */
+#crosshair{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:22px;
+  height:22px;
+  border:2px solid red;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  box-shadow:0 0 10px red;
+}
+
+/* HUD */
+#hud{
+  position:absolute;
+  top:10px;
+  left:10px;
+  font-size:20px;
+  background:rgba(0,0,0,0.5);
+  padding:10px 14px;
+  border-radius:10px;
+}
+
+/* BOTÃO SAIR */
+#closeBtn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  padding:10px 14px;
+  background:red;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  z-index:10000;
 }
 </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-<h2>🎮 GameHub</h2>
-<button onclick="show('home')">Início</button>
-<button onclick="show('library')">Biblioteca</button>
-<button onclick="show('favorites')">Favoritos</button>
+<header>🎮 GameHub Pro Ultra</header>
+
+<div class="games">
+
+  <div class="card">
+    <img src="https://img.icons8.com/color/256/target.png" alt="FPS">
+    <h3>Jogo de Tiro</h3>
+    <button onclick="play('https://www.crazygames.com/embed/krunker-io')">Jogar</button>
+  </div>
+
+  <div class="card">
+    <img src="https://img.icons8.com/color/256/controller.png" alt="2048">
+    <h3>2048</h3>
+    <button onclick="play('https://www.crazygames.com/embed/2048')">Jogar</button>
+  </div>
+
+  <div class="card">
+    <img src="https://img.icons8.com/color/256/rocket.png" alt="Slope">
+    <h3>Slope</h3>
+    <button onclick="play('https://www.crazygames.com/embed/slope')">Jogar</button>
+  </div>
+
+  <div class="card">
+    <img src="https://img.icons8.com/color/256/puzzle.png" alt="Moto X3M">
+    <h3>Moto X3M</h3>
+    <button onclick="play('https://www.crazygames.com/embed/moto-x3m')">Jogar</button>
+  </div>
+
 </div>
 
-<div class="main">
+<div id="gameContainer">
+  <iframe id="gameFrame"></iframe>
 
-<div class="top">
-<div>👤 <span id="user"></span> | XP: <span id="xp">0</span></div>
-<div id="loginBox">
-<input id="name" placeholder="Seu nome">
-<button onclick="login()">Entrar</button>
-</div>
-</div>
+  <div id="hud">
+    <div id="kills">Kills: 0</div>
+  </div>
 
-<div id="home">
-<h2>Jogos</h2>
-<div class="games" id="gameList"></div>
-</div>
+  <div id="crosshair"></div>
 
-<div id="library" style="display:none">
-<h2>Continue jogando</h2>
-<div id="recent"></div>
-</div>
-
-<div id="favorites" style="display:none">
-<h2>Favoritos ⭐</h2>
-<div id="favList"></div>
-</div>
-
-<canvas id="game" width="500" height="300"></canvas>
-
+  <button id="closeBtn" onclick="closeGame()">Sair</button>
 </div>
 
 <script>
+let kills = 0;
 
-let user = localStorage.getItem("user") || ""
-let xp = parseInt(localStorage.getItem("xp")) || 0
-let favorites = JSON.parse(localStorage.getItem("fav")) || []
-let recent = JSON.parse(localStorage.getItem("recent")) || []
-
-document.getElementById("user").innerText = user
-document.getElementById("xp").innerText = xp
-
-if(user){
-document.getElementById("loginBox").style.display="none"
+function play(url){
+  document.getElementById("gameFrame").src = url;
+  document.getElementById("gameContainer").style.display = "block";
 }
 
-function login(){
-let name = document.getElementById("name").value
-if(name){
-user=name
-localStorage.setItem("user",name)
-location.reload()
-}
+function closeGame(){
+  document.getElementById("gameContainer").style.display = "none";
+  document.getElementById("gameFrame").src = "";
 }
 
-let games=[
-{name:"Mini Game",id:1},
-{name:"Em breve",id:2}
-]
+document.addEventListener("click", function(){
+  const container = document.getElementById("gameContainer");
 
-function show(section){
-document.querySelectorAll(".main > div").forEach(d=>d.style.display="none")
-document.getElementById(section).style.display="block"
-}
+  if(container.style.display === "block"){
+    kills++;
+    document.getElementById("kills").innerText = "Kills: " + kills;
 
-function renderGames(){
-let list=document.getElementById("gameList")
-list.innerHTML=""
+    const cross = document.getElementById("crosshair");
+    cross.style.borderColor = "yellow";
+    cross.style.boxShadow = "0 0 16px yellow";
 
-games.forEach(g=>{
-list.innerHTML+=`
-<div class="card">
-<h3>${g.name}</h3>
-<button class="play" onclick="play(${g.id})">Jogar</button>
-<button onclick="addFav(${g.id})">⭐</button>
-</div>
-`
-})
-}
+    setTimeout(() => {
+      cross.style.borderColor = "red";
+      cross.style.boxShadow = "0 0 10px red";
+    }, 100);
 
-function addFav(id){
-if(!favorites.includes(id)){
-favorites.push(id)
-localStorage.setItem("fav",JSON.stringify(favorites))
-renderFav()
-alert("⭐ Favoritado!")
-}
-}
-
-function renderFav(){
-let f=document.getElementById("favList")
-f.innerHTML=""
-favorites.forEach(id=>{
-let g=games.find(x=>x.id==id)
-f.innerHTML+=`<p>${g.name}</p>`
-})
-}
-
-function play(id){
-if(!recent.includes(id)){
-recent.push(id)
-localStorage.setItem("recent",JSON.stringify(recent))
-renderRecent()
-}
-
-xp+=5
-localStorage.setItem("xp",xp)
-document.getElementById("xp").innerText=xp
-
-alert("🎮 Jogando!")
-}
-
-function renderRecent(){
-let r=document.getElementById("recent")
-r.innerHTML=""
-recent.forEach(id=>{
-let g=games.find(x=>x.id==id)
-r.innerHTML+=`<p>${g.name}</p>`
-})
-}
-
-renderGames()
-renderFav()
-renderRecent()
-
-// MINI JOGO BASE
-let x=200,y=120
-
-document.addEventListener("keydown",e=>{
-if(e.key=="ArrowUp")y-=10
-if(e.key=="ArrowDown")y+=10
-if(e.key=="ArrowLeft")x-=10
-if(e.key=="ArrowRight")x+=10
-})
-
-const c=document.getElementById("game")
-const ctx=c.getContext("2d")
-
-function loop(){
-ctx.fillStyle="#111"
-ctx.fillRect(0,0,500,300)
-
-ctx.fillStyle="#0ff"
-ctx.fillRect(x,y,30,30)
-
-requestAnimationFrame(loop)
-}
-
-loop()
-
+    try{
+      const audio = new Audio("https://www.soundjay.com/mechanical/sounds/mechanical-gunshot-01.mp3");
+      audio.volume = 0.2;
+      audio.play();
+    }catch(e){
+      console.log("Som não carregou.");
+    }
+  }
+});
 </script>
 
 </body>
